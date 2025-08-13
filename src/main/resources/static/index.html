@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            color: #00ff99;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid #00ff99;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #1a1a1a;
+            box-shadow: 0 0 15px rgba(0, 255, 153, 0.4);
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #00ff99;
+            text-align: left;
+        }
+
+        th {
+            background-color: #111;
+            color: #00ff99;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: rgba(0, 255, 153, 0.1);
+        }
+
+        #refreshBtn {
+            background-color: #00ff99;
+            color: #0f0f0f;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        #refreshBtn:hover {
+            background-color: #00cc77;
+        }
+    </style>
+</head>
+<body>
+<h1>User Management</h1>
+<button id="refreshBtn">Refresh Users</button>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email Address</th>
+        <th>Phone Number</th>
+        <th>Date of Birth</th>
+    </tr>
+    </thead>
+    <tbody id="userTableBody"></tbody>
+</table>
+
+<script>
+    async function loadUsers() {
+    const response = await fetch('/api/users?page=0&size=1000');
+    const data = await response.json();
+
+    // Sort numerically by id
+    data.content.sort((a, b) => Number(a.id) - Number(b.id));
+
+    const tbody = document.getElementById('userTableBody');
+    tbody.innerHTML = '';
+    data.content.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.firstName}</td>
+            <td>${user.lastName}</td>
+            <td>${user.emailAddress}</td>
+            <td>${user.phoneNumber || ''}</td>
+            <td>${user.dateOfBirth || ''}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+    document.getElementById('refreshBtn').addEventListener('click', loadUsers);
+
+    loadUsers();
+</script>
+</body>
+</html>
